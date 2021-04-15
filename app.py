@@ -14,19 +14,32 @@ api = Api(app)
 
 app.session = scoped_session(SessionLocal, scopefunc=_app_ctx_stack.__ident_func__)
 class RoomHandler2(Resource):
-	def get(self, id):
-		roomModel = app.session.query(models.Room).get(id)
+	def get(self, roomId):
+		roomModel = app.session.query(models.Room).get(roomId)
 		if roomModel == None:
 			return 'error no room found', 404
+		# print(roomModel.sensors[0].x)
 		room = {
 			'id': roomModel.id,
 			'name': roomModel.name,
 			'width': roomModel.width,
 			'length': roomModel.length,
 			'height': roomModel.height,
-			'sensors': roomModel.sensors
+			'sensors': [{'id':sensor.id, 'x':sensor.x, 'y':sensor.y, 'z':sensor.z}for sensor in roomModel.sensors]
 		}
 		return jsonify(room)
+
+	def post(self, roomId):
+		data = json.loads(request.data)
+		sensor = models.Sensor(room_id = roomId,
+		x = data['x'],
+		y = data['y'],
+		z = data['z'])
+		app.session.add(sensor)
+		app.session.commit()
+		return 'success',201
+
+
 class RoomHandler(Resource):
 	
 	def get(self):
@@ -58,13 +71,13 @@ class RoomsHandler(Resource):
 				'width': room.width,
 				'length': room.length,
 				'height': room.height,
-				'sensors': room.sensors
+				'sensors': [{'id':sensor.id, 'x':sensor.x, 'y':sensor.y, 'z':sensor.z}for sensor in room.sensors]
 			})
 		return jsonify(roomsList)
 
 api.add_resource(RoomsHandler, '/room/all')
 api.add_resource(RoomHandler, '/room')
-api.add_resource(RoomHandler2, '/room/<int:id>')
+api.add_resource(RoomHandler2, '/room/<roomId>')
 
 if __name__ == '__main__':
 	app.run(debug=True)
