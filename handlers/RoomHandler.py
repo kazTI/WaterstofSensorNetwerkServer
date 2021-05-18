@@ -10,18 +10,21 @@ rooms = [
 		'sensorList':[
 			{
 				'id':'1',
+				'name':'one',
 				'x':0,
 				'y':0,
 				'z':0
 			},
 			{
 				'id':'2',
+				'name':'one',
 				'x':0,
 				'y':0,
 				'z':0
 			},
 			{
 				'id':'3',
+				'name':'one',
 				'x':0,
 				'y':0,
 				'z':0
@@ -36,18 +39,21 @@ rooms = [
 		'sensorList':[
 			{
 				'id':'1',
+				'name':'one',
 				'x':0,
 				'y':0,
 				'z':0
 			},
 			{
 				'id':'2',
+				'name':'one',
 				'x':0,
 				'y':0,
 				'z':0
 			},
 			{
 				'id':'3',
+				'name':'one',
 				'x':0,
 				'y':0,
 				'z':0
@@ -62,18 +68,21 @@ rooms = [
 		'sensorList':[
 			{
 				'id':'1',
+				'name':'one',
 				'x':0,
 				'y':0,
 				'z':0
 			},
 			{
 				'id':'2',
+				'name':'one',
 				'x':0,
 				'y':0,
 				'z':0
 			},
 			{
 				'id':'3',
+				'name':'one',
 				'x':0,
 				'y':0,
 				'z':0

@@ -29,6 +29,7 @@ USE `new_schema1` ;
 CREATE TABLE IF NOT EXISTS `new_schema1`.`Sensoren` (
   `Sensor_ID` INT NOT NULL,
   `Sensor_Waarde` DECIMAL(12) NULL,
+  `Sensor_name` STRING NULL,
   `X-Sens` INT NULL,
   `Y-Sens` INT NULL,
   `Z-Sens` INT NULL,

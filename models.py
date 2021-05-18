@@ -18,6 +18,7 @@ class Sensor(Base):
 
 	id = Column(Integer, primary_key=True, index=True)
 	room_id = Column(Integer, ForeignKey('Rooms.id'))
+	name = Column(String)
 	x = Column(Integer)
 	y = Column(Integer)
 	z = Column(Integer)

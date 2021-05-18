@@ -25,17 +25,31 @@ class RoomHandler2(Resource):
 			'width': roomModel.width,
 			'length': roomModel.length,
 			'height': roomModel.height,
-			'sensors': [{'id':sensor.id, 'x':sensor.x, 'y':sensor.y, 'z':sensor.z}for sensor in roomModel.sensors]
+			'sensors': [{'id':sensor.id, 'name':sensor.name, 'x':sensor.x, 'y':sensor.y, 'z':sensor.z}for sensor in roomModel.sensors]
 		}
 		return jsonify(room)
 
 	def post(self, roomId):
 		data = json.loads(request.data)
 		sensor = models.Sensor(room_id = roomId,
+		name = data['name'],
 		x = data['x'],
 		y = data['y'],
 		z = data['z'])
+
 		app.session.add(sensor)
+		app.session.commit()
+		return 'success',201
+
+class SensorHandler(Resource):
+	def put(self, sensorId):
+		data = json.loads(request.data)
+		
+		app.session.query(models.Sensor).filter(models.Sensor.id == sensorId).update({
+			'name': data['name'],
+			'x': data['x'], 
+			'y': data['y'],
+			'z': data['z']})
 		app.session.commit()
 		return 'success',201
 
@@ -71,13 +85,14 @@ class RoomsHandler(Resource):
 				'width': room.width,
 				'length': room.length,
 				'height': room.height,
-				'sensors': [{'id':sensor.id, 'x':sensor.x, 'y':sensor.y, 'z':sensor.z}for sensor in room.sensors]
+				'sensors': [{'id':sensor.id, 'name':sensor.name, 'x':sensor.x, 'y':sensor.y, 'z':sensor.z}for sensor in room.sensors]
 			})
 		return jsonify(roomsList)
 
 api.add_resource(RoomsHandler, '/room/all')
 api.add_resource(RoomHandler, '/room')
 api.add_resource(RoomHandler2, '/room/<roomId>')
+api.add_resource(SensorHandler, '/sensor/<sensorId>')
 
 if __name__ == '__main__':
 	app.run(debug=True)
