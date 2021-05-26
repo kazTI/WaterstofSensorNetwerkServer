@@ -40,6 +40,17 @@ class RoomHandler2(Resource):
 		app.session.add(sensor)
 		app.session.commit()
 		return 'success',201
+	
+	def put(self, roomId):
+		data = json.loads(request.data)
+		
+		app.session.query(models.Room).filter(models.Room.id == roomId).update({
+			'name': data['name'],
+			'width': data['width'],
+			'length': data['length'],
+			'height': data['height']})
+		app.session.commit()
+		return 'success',201
 
 class SensorHandler(Resource):
 	def put(self, sensorId):
