@@ -42,10 +42,13 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `new_schema1`.`Obstacles` (
   `Room_ID` INT NOT NULL,
-  `Obstacel_ID` INT NOT NULL,
-  `X_Cor` INT NULL,
-  `Y_Cor` INT NULL,
-  `Z_Cor` INT NULL,
+  `Obstacle_ID` INT NOT NULL,
+  `X1_Cor` INT NULL,
+  `Y1_Cor` INT NULL,
+  `Z1_Cor` INT NULL,
+  `X2_Cor` INT NULL,
+  `Y2_Cor` INT NULL,
+  `Z2_Cor` INT NULL,
   PRIMARY KEY (`Room_ID`))
 ENGINE = InnoDB;
 
