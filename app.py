@@ -2,12 +2,10 @@ from flask import Flask, jsonify, abort, make_response, _app_ctx_stack
 from flask_restful import Api, Resource, reqparse, fields, marshal, request
 from sqlalchemy.orm import scoped_session
 import json
-
 import models
 from database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
-
 
 app = Flask(__name__)
 api = Api(app)
@@ -18,7 +16,6 @@ class RoomHandler2(Resource):
 		roomModel = app.session.query(models.Room).get(roomId)
 		if roomModel == None:
 			return 'error no room found', 404
-		# print(roomModel.sensors[0].x)
 		room = {
 			'id': roomModel.id,
 			'name': roomModel.name,
@@ -94,7 +91,6 @@ class ObstacleHandler(Resource):
 
 
 class RoomHandler(Resource):
-	
 	def get(self):
 		pass
 	
@@ -113,7 +109,6 @@ class RoomHandler(Resource):
 		return 'success',201
 
 class RoomsHandler(Resource):
-
 	def get(self):
 		rooms = app.session.query(models.Room).all()
 		roomsList = []
