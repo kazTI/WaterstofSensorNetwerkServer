@@ -4,6 +4,8 @@ from database import SessionLocal, engine
 from sqlalchemy.orm import scoped_session
 import json
 import models
+import threading
+import random
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -15,6 +17,7 @@ app.session = scoped_session(SessionLocal, scopefunc=_app_ctx_stack.__ident_func
 
 @socketio.on('connect')
 def test_connect():
+    updateSensorValue()
     print('A client connected')
 
 @socketio.on('disconnect')
@@ -52,7 +55,7 @@ def getAllRooms():
             'sensors': [{'id':sensor.id, 'name':sensor.name, 'x':sensor.x, 'y':sensor.y, 'z':sensor.z}for sensor in room.sensors],
             'obstacles': [{'id':obstacle.id, 'name':obstacle.name, 'x1':obstacle.x1, 'y1':obstacle.y1, 'z1':obstacle.z1, 'x2':obstacle.x2, 'y2':obstacle.y2, 'z2':obstacle.z2}for obstacle in room.obstacles]
         })
-    emit('json',roomsList)
+    emit('getRooms', json.dumps(roomsList))
 
 def ack(data):
     print('message from a client was received! ' + '"' + data + '"')
@@ -60,6 +63,11 @@ def ack(data):
 @socketio.on('message')
 def handle_message(msg):
     emit('message', msg, callback=ack(msg))
+
+def updateSensorValue():
+    print('updatesensorValue ')
+    emit('updateSensorValue', json.dumps([{'id': 1, 'value': random.random()}]))
+
 
 if __name__ == '__main__':
     socketio.run(app, port=5001, debug=True)
