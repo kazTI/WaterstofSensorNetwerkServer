@@ -6,6 +6,7 @@ import json
 import models
 import threading
 import random
+import time 
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -17,7 +18,6 @@ app.session = scoped_session(SessionLocal, scopefunc=_app_ctx_stack.__ident_func
 
 @socketio.on('connect')
 def test_connect():
-    updateSensorValue()
     print('A client connected')
 
 @socketio.on('disconnect')
@@ -55,7 +55,8 @@ def getAllRooms():
             'sensors': [{'id':sensor.id, 'name':sensor.name, 'x':sensor.x, 'y':sensor.y, 'z':sensor.z}for sensor in room.sensors],
             'obstacles': [{'id':obstacle.id, 'name':obstacle.name, 'x1':obstacle.x1, 'y1':obstacle.y1, 'z1':obstacle.z1, 'x2':obstacle.x2, 'y2':obstacle.y2, 'z2':obstacle.z2}for obstacle in room.obstacles]
         })
-    emit('getRooms', json.dumps(roomsList))
+    print('senddong roomdata')
+    socketio.emit('sendAllRooms', json.dumps(roomsList))
 
 def ack(data):
     print('message from a client was received! ' + '"' + data + '"')
