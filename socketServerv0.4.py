@@ -56,7 +56,20 @@ def getAllRooms():
             'obstacles': [{'id':obstacle.id, 'name':obstacle.name, 'x1':obstacle.x1, 'y1':obstacle.y1, 'z1':obstacle.z1, 'x2':obstacle.x2, 'y2':obstacle.y2, 'z2':obstacle.z2}for obstacle in room.obstacles]
         })
     print('senddong roomdata')
-    socketio.emit('sendAllRooms', json.dumps(roomsList))
+    emit('sendAllRooms', json.dumps(roomsList))
+
+
+@socketio.on('ready')
+def sendAllData():
+    for roomId in app.session.query(models.Room.id).distinct():
+        sendARoom(roomId)
+        
+    for sensorId in app.session.query(models.Sensor.id).distinct():
+        sendASensor(sensorId)
+
+    for obstacleId in app.session.query(models.Obstacle.id).distinct():
+        sendAObstacle(obstacleId)
+
 
 def ack(data):
     print('message from a client was received! ' + '"' + data + '"')
@@ -69,6 +82,49 @@ def updateSensorValue():
     print('updatesensorValue ')
     emit('updateSensorValue', json.dumps([{'id': 1, 'value': random.random()}]))
 
+def sendARoom(roomId, broadcast=False):
+    result = app.session.query(models.Room).get(roomId)
+    
+    room = {
+        'id': result.id,
+        'name': result.name,
+        'width': result.width,
+        'length': result.length,
+        'height': result.height
+    }
+    print(room)
+    emit('sendARoom', json.dumps(room), broadcast=broadcast)
+
+def sendASensor(sensorId, broadcast=False):
+    result = app.session.query(models.Sensor).get(sensorId)
+    
+    sensor = {
+        'id':result.id,
+        'roomId': result.room_id,
+        'name':result.name, 
+        'x':result.x, 
+        'y':result.y, 
+        'z':result.z
+    }
+    print(sensor)
+    emit('sendASensor', json.dumps(sensor), broadcast=broadcast)
+
+def sendAObstacle(obstacleId, broadcast=False):
+    result = app.session.query(models.Obstacle).get(obstacleId)
+
+    obstacle = {
+        'id':result.id,
+        'roomId': result.room_id,
+        'name':result.name, 
+        'x1':result.x1, 
+        'y1':result.y1, 
+        'z1':result.z1, 
+        'x2':result.x2, 
+        'y2':result.y2, 
+        'z2':result.z2
+    }
+    print(obstacle)
+    emit('sendAObstacle', json.dumps(obstacle), broadcast=broadcast)
 
 if __name__ == '__main__':
     socketio.run(app, port=5001, debug=True)
