@@ -91,7 +91,7 @@ def sendARoom(roomId, broadcast=False):
         'length': result.length,
         'height': result.height
     }
-    print(room)
+    # print(room)
     emit('sendARoom', json.dumps(room), broadcast=broadcast)
     
 
@@ -106,7 +106,7 @@ def sendASensor(sensorId, broadcast=False):
         'y':result.y, 
         'z':result.z
     }
-    print(sensor)
+    # print(sensor)
     emit('sendASensor', json.dumps(sensor), broadcast=broadcast)
 
 def sendAObstacle(obstacleId, broadcast=False):
@@ -123,7 +123,7 @@ def sendAObstacle(obstacleId, broadcast=False):
         'y2':result.y2, 
         'z2':result.z2
     }
-    print(obstacle)
+    # print(obstacle)
     emit('sendAObstacle', json.dumps(obstacle), broadcast=broadcast)
 
 @socketio.on('getAllSensorIds')
@@ -144,6 +144,83 @@ def handleSensorValue(data):
     print(data)
     emit('sendSensorValue', data, broadcast=True)
 
+
+@socketio.on('createRoom')
+def createRoom(jsonData):
+    data = json.loads(jsonData)
+    room = models.Room(name = data['name'],
+    width = data['width'],
+    length = data['length'],
+    height = data['height'])
+    app.session.add(room)
+    app.session.commit()
+    sendARoom(room.id, broadcast=True)
+
+@socketio.on('editRoom')
+def editRoom(jsonData):
+    data = json.loads(jsonData)
+    
+    app.session.query(models.Room).filter(models.Room.id == data['id']).update({
+        'name': data['name'],
+        'width': data['width'],
+        'length': data['length'],
+        'height': data['height']})
+    app.session.commit()
+    sendARoom(data['id'], broadcast=True)
+
+@socketio.on('createSensor')
+def createSensor(jsonData):
+    data = json.loads(jsonData)
+    sensor = models.Sensor(room_id = data['room_id'],
+    name = data['name'],
+    x = data['x'],
+    y = data['y'],
+    z = data['z'])
+    app.session.add(sensor)
+    app.session.commit()
+    sendASensor(sensor.id, broadcast=True)
+
+@socketio.on('editSensor')
+def editSensor(jsonData):
+    data = json.loads(jsonData)
+    
+    app.session.query(models.Sensor).filter(models.Sensor.id == data['id']).update({
+        'name': data['name'],
+        'x': data['x'], 
+        'y': data['y'],
+        'z': data['z']})
+    app.session.commit()
+    sendASensor(data['id'], broadcast=True)
+
+@socketio.on('createObstacle')
+def createObstacle(jsonData):
+    data = json.loads(jsonData)
+    obstacle = models.Obstacle(room_id = data['room_id'],
+    name = data['name'],
+    x1 = data['x1'],
+    y1 = data['y1'],
+    z1 = data['z1'],
+    x2 = data['x2'],
+    y2 = data['y2'],
+    z2 = data['z2'])
+    app.session.add(obstacle)
+    app.session.commit()
+    sendAObstacle(obstacle.id, broadcast=True)
+
+@socketio.on('editObstacle')
+def editObstacle(jsonData):
+    data = json.loads(jsonData)
+
+    app.session.query(models.Obstacle).filter(models.Obstacle.id == data['id']).update({
+        'name': data['name'],
+        'x1': data['x1'], 
+        'y1': data['y1'],
+        'z1': data['z1'],
+        'x2': data['x2'], 
+        'y2': data['y2'],
+        'z2': data['z2']})
+    app.session.commit()
+    sendAObstacle(data['id'], broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, port=5001, debug=True)
