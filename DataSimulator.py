@@ -38,7 +38,9 @@ class DataSimulator():
     def sendSensorValue(self):
         sensorData = {}
         for sensorId in self.sensorIds:
-            sensorData[sensorId] = self.getRandomData()
+            sensorData[sensorId['sensor_id']] = {}
+            sensorData[sensorId['sensor_id']]['value'] = self.getRandomData()
+            sensorData[sensorId['sensor_id']]['room_id'] = sensorId['room_id']
         
         response = json.dumps(sensorData)
 

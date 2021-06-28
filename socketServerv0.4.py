@@ -129,8 +129,11 @@ def sendAObstacle(obstacleId, broadcast=False):
 @socketio.on('getAllSensorIds')
 def sendAllSensorIds():
     sensorIds = []
-    for sensorId in app.session.query(models.Sensor.id).distinct():
-        sensorIds.append(sensorId[0])
+    for sensorInfo in app.session.query(models.Sensor.id, models.Sensor.room_id).distinct():
+        sensorIds.append({
+            "sensor_id":sensorInfo[0],
+            "room_id": sensorInfo[1]
+            })
     
     response = json.dumps(sensorIds)
 
