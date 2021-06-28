@@ -33,7 +33,7 @@ class DataSimulator():
         self.sensorIds = json.loads(data)
     
     def getRandomData(self):
-        return 0.1
+        return random.random()
         
     def sendSensorValue(self):
         sensorData = {}
