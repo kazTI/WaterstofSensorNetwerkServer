@@ -63,13 +63,12 @@ def getAllRooms():
 def sendAllData():
     for roomId in app.session.query(models.Room.id).distinct():
         sendARoom(roomId)
-        
+
     for sensorId in app.session.query(models.Sensor.id).distinct():
         sendASensor(sensorId)
 
     for obstacleId in app.session.query(models.Obstacle.id).distinct():
         sendAObstacle(obstacleId)
-
 
 def ack(data):
     print('message from a client was received! ' + '"' + data + '"')
@@ -94,6 +93,7 @@ def sendARoom(roomId, broadcast=False):
     }
     print(room)
     emit('sendARoom', json.dumps(room), broadcast=broadcast)
+    
 
 def sendASensor(sensorId, broadcast=False):
     result = app.session.query(models.Sensor).get(sensorId)
@@ -125,6 +125,22 @@ def sendAObstacle(obstacleId, broadcast=False):
     }
     print(obstacle)
     emit('sendAObstacle', json.dumps(obstacle), broadcast=broadcast)
+
+@socketio.on('getAllSensorIds')
+def sendAllSensorIds():
+    sensorIds = []
+    for sensorId in app.session.query(models.Sensor.id).distinct():
+        sensorIds.append(sensorId[0])
+    
+    response = json.dumps(sensorIds)
+
+    emit('sendAllSensorIds', response)
+
+@socketio.on('sendSensorValueToServer')
+def handleSensorValue(data):
+    print(data)
+    emit('sendSensorValue', data, broadcast=True)
+
 
 if __name__ == '__main__':
     socketio.run(app, port=5001, debug=True)
