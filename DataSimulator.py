@@ -10,6 +10,7 @@ class DataSimulator():
         self.sio.connect('http://localhost:5001')
         self.sensorIds = []
         self.sio.on('sendAllSensorIds', self.handleSensorIds)
+        self.sio.on('sendASensor', self.handlesensorId)
         pass
     #Default socketIO events
     #-------------------------------------------------------------------------#
@@ -25,6 +26,14 @@ class DataSimulator():
     def disconnect():
         print('Disconnected from SocketO server')
 
+    def handlesensorId(self, data):
+        sensor = json.loads(data)
+        sensorId = {
+            "room_id": sensor['roomId'],
+            "sensor_id":sensor['id']}
+        if sensorId not in self.sensorIds:
+            self.sensorIds.append(sensorId)
+
 
     def getSensorIds(self):
         self.sio.emit('getAllSensorIds')
@@ -38,6 +47,7 @@ class DataSimulator():
     def sendSensorValue(self):
         sensorData = {}
         for sensorId in self.sensorIds:
+            print(sensorId)
             sensorData[sensorId['sensor_id']] = {}
             sensorData[sensorId['sensor_id']]['value'] = self.getRandomData()
             sensorData[sensorId['sensor_id']]['room_id'] = sensorId['room_id']
@@ -54,8 +64,3 @@ dataSimulator.getSensorIds()
 while True:
     dataSimulator.sleep(1)
     dataSimulator.sendSensorValue()
-
-
-
-
-        
