@@ -58,7 +58,7 @@ def getAllRooms():
     print('senddong roomdata')
     emit('sendAllRooms', json.dumps(roomsList))
 
-
+'''function gets all ids ands sends all data individualy'''
 @socketio.on('ready')
 def sendAllData():
     for roomId in app.session.query(models.Room.id).distinct():
@@ -81,6 +81,7 @@ def updateSensorValue():
     print('updatesensorValue ')
     emit('updateSensorValue', json.dumps([{'id': 1, 'value': random.random()}]))
 
+'''takes int, bool and gets a room from the database and sends it to client bool is true to send to all'''
 def sendARoom(roomId, broadcast=False):
     result = app.session.query(models.Room).get(roomId)
     
@@ -94,7 +95,7 @@ def sendARoom(roomId, broadcast=False):
     # print(room)
     emit('sendARoom', json.dumps(room), broadcast=broadcast)
     
-
+'''takes int, bool and gets a sensor from the database and sends it to client bool is true to send to all'''
 def sendASensor(sensorId, broadcast=False):
     result = app.session.query(models.Sensor).get(sensorId)
     
@@ -109,6 +110,7 @@ def sendASensor(sensorId, broadcast=False):
     # print(sensor)
     emit('sendASensor', json.dumps(sensor), broadcast=broadcast)
 
+'''takes int, bool and gets a obstacle from the database and sends it to client bool is true to send to all'''
 def sendAObstacle(obstacleId, broadcast=False):
     result = app.session.query(models.Obstacle).get(obstacleId)
 
@@ -126,6 +128,7 @@ def sendAObstacle(obstacleId, broadcast=False):
     # print(obstacle)
     emit('sendAObstacle', json.dumps(obstacle), broadcast=broadcast)
 
+'''sends all sensors in a dict to a client that requests it'''
 @socketio.on('getAllSensorIds')
 def sendAllSensorIds():
     sensorIds = []
@@ -139,12 +142,13 @@ def sendAllSensorIds():
 
     emit('sendAllSensorIds', response)
 
+'''gets dict with sensor values and sends it to all connected clients'''
 @socketio.on('sendSensorValueToServer')
 def handleSensorValue(data):
     print(data)
     emit('sendSensorValue', data, broadcast=True)
 
-
+'''gets Sting with json data containing room info and adds it to the database'''
 @socketio.on('createRoom')
 def createRoom(jsonData):
     data = json.loads(jsonData)
@@ -156,6 +160,7 @@ def createRoom(jsonData):
     app.session.commit()
     sendARoom(room.id, broadcast=True)
 
+'''gets Sting with json data containing room info and edits it in the database'''
 @socketio.on('editRoom')
 def editRoom(jsonData):
     data = json.loads(jsonData)
@@ -168,6 +173,7 @@ def editRoom(jsonData):
     app.session.commit()
     sendARoom(data['id'], broadcast=True)
 
+'''gets Sting with json data containing sensor info and adds it to the database'''
 @socketio.on('createSensor')
 def createSensor(jsonData):
     data = json.loads(jsonData)
@@ -180,6 +186,7 @@ def createSensor(jsonData):
     app.session.commit()
     sendASensor(sensor.id, broadcast=True)
 
+'''gets Sting with json data containing sensor info and edits it in the database'''
 @socketio.on('editSensor')
 def editSensor(jsonData):
     data = json.loads(jsonData)
@@ -192,6 +199,7 @@ def editSensor(jsonData):
     app.session.commit()
     sendASensor(data['id'], broadcast=True)
 
+'''gets Sting with json data containing obstacle info and adds it to the database'''
 @socketio.on('createObstacle')
 def createObstacle(jsonData):
     data = json.loads(jsonData)
@@ -207,6 +215,7 @@ def createObstacle(jsonData):
     app.session.commit()
     sendAObstacle(obstacle.id, broadcast=True)
 
+'''gets Sting with json data containing obstacle info and edits it in the database'''
 @socketio.on('editObstacle')
 def editObstacle(jsonData):
     data = json.loads(jsonData)

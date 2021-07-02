@@ -26,6 +26,7 @@ class DataSimulator():
     def disconnect():
         print('Disconnected from SocketO server')
 
+    '''method uses data to add sensor to sensor list'''
     def handlesensorId(self, data):
         sensor = json.loads(data)
         sensorId = {
@@ -34,16 +35,19 @@ class DataSimulator():
         if sensorId not in self.sensorIds:
             self.sensorIds.append(sensorId)
 
-
+    '''send to server to receive all sensor ids'''
     def getSensorIds(self):
         self.sio.emit('getAllSensorIds')
     
+    '''gets a dict containing all sensor ids'''
     def handleSensorIds(self, data):
         self.sensorIds = json.loads(data)
     
+    '''returns float method generates random float'''
     def getRandomData(self):
         return random.random()
         
+    '''method sends dict with random data and a corresponding sensor'''
     def sendSensorValue(self):
         sensorData = {}
         for sensorId in self.sensorIds:
@@ -61,6 +65,7 @@ class DataSimulator():
 
 dataSimulator = DataSimulator()
 dataSimulator.getSensorIds()
+#send continues data
 while True:
     dataSimulator.sleep(1)
     dataSimulator.sendSensorValue()
