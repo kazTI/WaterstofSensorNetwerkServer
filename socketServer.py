@@ -55,7 +55,6 @@ def getAllRooms():
             'sensors': [{'id':sensor.id, 'name':sensor.name, 'x':sensor.x, 'y':sensor.y, 'z':sensor.z}for sensor in room.sensors],
             'obstacles': [{'id':obstacle.id, 'name':obstacle.name, 'x1':obstacle.x1, 'y1':obstacle.y1, 'z1':obstacle.z1, 'x2':obstacle.x2, 'y2':obstacle.y2, 'z2':obstacle.z2}for obstacle in room.obstacles]
         })
-    print('senddong roomdata')
     emit('sendAllRooms', json.dumps(roomsList))
 
 '''function gets all ids ands sends all data individualy'''
@@ -78,7 +77,6 @@ def handle_message(msg):
     emit('message', msg, callback=ack(msg))
 
 def updateSensorValue():
-    print('updatesensorValue ')
     emit('updateSensorValue', json.dumps([{'id': 1, 'value': random.random()}]))
 
 '''takes int, bool and gets a room from the database and sends it to client bool is true to send to all'''
@@ -92,7 +90,6 @@ def sendARoom(roomId, broadcast=False):
         'length': result.length,
         'height': result.height
     }
-    # print(room)
     emit('sendARoom', json.dumps(room), broadcast=broadcast)
     
 '''takes int, bool and gets a sensor from the database and sends it to client bool is true to send to all'''
@@ -107,7 +104,7 @@ def sendASensor(sensorId, broadcast=False):
         'y':result.y, 
         'z':result.z
     }
-    # print(sensor)
+
     emit('sendASensor', json.dumps(sensor), broadcast=broadcast)
 
 '''takes int, bool and gets a obstacle from the database and sends it to client bool is true to send to all'''
@@ -125,7 +122,6 @@ def sendAObstacle(obstacleId, broadcast=False):
         'y2':result.y2, 
         'z2':result.z2
     }
-    # print(obstacle)
     emit('sendAObstacle', json.dumps(obstacle), broadcast=broadcast)
 
 '''sends all sensors in a dict to a client that requests it'''
@@ -145,7 +141,6 @@ def sendAllSensorIds():
 '''gets dict with sensor values and sends it to all connected clients'''
 @socketio.on('sendSensorValueToServer')
 def handleSensorValue(data):
-    print(data)
     emit('sendSensorValue', data, broadcast=True)
 
 '''gets Sting with json data containing room info and adds it to the database'''
